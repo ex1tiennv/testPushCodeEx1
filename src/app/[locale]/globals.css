@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --primary: 81, 81, 229;
+}
+
+.ant-menu-item-selected {
+    border-right: 3px solid rgb(var(--primary));
+}
+
+/* :root {
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --foreground-rgb: 255, 255, 255;
+        --background-start-rgb: 0, 0, 0;
+        --background-end-rgb: 0, 0, 0;
+    }
+}
+
+body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+            to bottom,
+            transparent,
+            rgb(var(--background-end-rgb))
+        )
+        rgb(var(--background-start-rgb));
+} */
+
+.slick-next:before,.slick-prev:before  {
+    font-size: 34px !important;
+    color : gray
+  }
+  .slick-next{
+    right:-30px !important;
+  }
+  .slick-prev{
+    left: -30px !important;
+  }
+  
+  
+  .slick-slider .slick-track{
+    align-items :stretch !important;
+    display: flex;
+  }
+.slick-dots{
+    bottom: -7px !important;
+}
+
+.slick-dots.slick-thumb {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  
+  .slick-dots.slick-thumb li {
+    width: 6px;
+    height: 6px;
+    margin: 0 3px;
+    border-radius: 999px;
+    transition: all 0.5s ease-in-out;
+    will-change: width;
+    background-color: black;
+  }
+  
+  .slick-dots.slick-thumb li.slick-active {
+    background-color: red;
+    width: 24px;
+  }
+  .slick-track{
+    display: flex;
+    justify-content: center;
+  }
+  
