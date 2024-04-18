@@ -224,6 +224,8 @@ const UpdateMyProfile = () => {
                 setStatus(FETCH_STATUS.SUCCESS)
                 const newAuth: IAccount = {
                     companyId: serviceUser.getInfoStorage()?.companyId || 1,
+                    companyName:
+                        serviceUser.getInfoStorage()?.companyName || '',
                     email: values.email,
                     id: myId,
                     permissionKeys:

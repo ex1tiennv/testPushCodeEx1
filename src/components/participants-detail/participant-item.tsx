@@ -11,7 +11,7 @@ interface IParticipantItem extends IParticipantsView {}
 
 const ParticipantItem = ({
     defaultAvatarHashColor,
-    name,
+    email,
     avatar,
     joined,
 }: IParticipantItem) => {
@@ -45,15 +45,15 @@ const ParticipantItem = ({
                         }}
                         size="small"
                     >
-                        {getFirstCharacterUpperCase(name)}
+                        {getFirstCharacterUpperCase(email)}
                     </Avatar>
                 )}
                 <div className="cursor-pointer">
                     <Text
-                        title={name}
+                        title={email}
                         className={`${!joined && 'text-black-45'}`}
                     >
-                        {truncateString({ text: name, start: 10, end: 0 })}{' '}
+                        {truncateString({ text: email, start: 10, end: 0 })}{' '}
                     </Text>
                     {joined && (
                         <Text className="text-polar-green">

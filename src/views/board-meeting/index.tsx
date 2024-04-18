@@ -25,7 +25,7 @@ const BoardMeetingList = () => {
     const { authState } = useAuthLogin()
     const permissionCreateBoardMeeting = checkPermission(
         authState.userData?.permissionKeys,
-        Permissions.CREATE_BOARD_MEETING,
+        Permissions.CREATE_MEETING,
     )
     const {
         meetingState,

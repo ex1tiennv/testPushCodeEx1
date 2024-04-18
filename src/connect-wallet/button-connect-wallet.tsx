@@ -76,7 +76,6 @@ const ButtonConnectWallet = ({
 
             if (authState.status === EActionStatus.Failed) {
                 if (authState.errorMessage == 'USER_STATUS_INACTIVE') {
-                    console.log('User Inactive')
                     openNotification({
                         message: t('USER_STATUS_INACTIVE'),
                         placement: 'topRight',
@@ -131,7 +130,7 @@ const ButtonConnectWallet = ({
                                                     {t('TITLE_SYSTEM_LOGIN')}
                                                 </Text>
                                             </div>
-                                            <div className="flex flex-col text-center ">
+                                            <div className="flex flex-col ">
                                                 <Button
                                                     onClick={openConnectModal}
                                                     type="default"
@@ -140,7 +139,7 @@ const ButtonConnectWallet = ({
                                                 >
                                                     {connectWalletText}
                                                 </Button>
-                                                <div className="mb-2 text-2xl font-bold">
+                                                <div className="mx-auto mb-2 text-2xl font-bold">
                                                     {t('OR')}
                                                 </div>
                                                 <div className="mb-6">

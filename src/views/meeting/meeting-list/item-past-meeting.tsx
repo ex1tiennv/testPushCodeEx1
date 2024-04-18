@@ -7,7 +7,8 @@ import { enumToArray } from '@/utils'
 import { formatTimeMeeting } from '@/utils/date'
 import { truncateString } from '@/utils/format-string'
 import { IMeetingItem } from '@/views/meeting/meeting-list/type'
-import { Button, Col, Row, Tooltip, Typography } from 'antd'
+import { EyeTwoTone } from '@ant-design/icons'
+import { Col, Row, Tooltip, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -85,15 +86,14 @@ const ItemPastMeeting = ({
                     }
                 })}
             </Col>
-            <Col span={4} className="flex items-center justify-end">
-                <Button
-                    size="middle"
+            <Col span={4} className="flex items-center justify-end pr-5">
+                <EyeTwoTone
+                    style={{ fontSize: '18px' }}
+                    twoToneColor="#5151e5"
                     onClick={() => {
-                        router.push('/meeting/detail/' + meetings_id)
+                        router.push(`/meeting/detail/${meetings_id}`)
                     }}
-                >
-                    {t('BTN_VIEW_DETAIL')}
-                </Button>
+                />
             </Col>
         </Row>
     )

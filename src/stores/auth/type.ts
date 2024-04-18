@@ -26,6 +26,7 @@ export interface IAccount {
     username: string
     email: string
     companyId: number
+    companyName: string
     avatar: string
     permissionKeys: string[]
 }

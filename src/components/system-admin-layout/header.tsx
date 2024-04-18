@@ -4,6 +4,7 @@ import Link from 'next/link'
 import AccountInfoSystem from '../account-info-system'
 import { useEffect, useState } from 'react'
 import { useAuthAdminLogin } from '@/stores/auth-admin/hooks'
+import LocaleSwitcher from '../local-switcher'
 
 const Header = () => {
     const { authAdminState } = useAuthAdminLogin()
@@ -17,12 +18,16 @@ const Header = () => {
                 <Link href="/company">
                     <LogoAppIcon />
                 </Link>
-                {mounted && authAdminState.isAuthenticated && (
-                    <AccountInfoSystem
-                        name="Stan Lee"
-                        avatar="/images/default-avatar.png"
-                    />
-                )}
+
+                <div className="flex gap-5">
+                    <LocaleSwitcher />
+                    {mounted && authAdminState.isAuthenticated && (
+                        <AccountInfoSystem
+                            name="Stan Lee"
+                            avatar="/images/default-avatar.png"
+                        />
+                    )}
+                </div>
             </div>
         </Layout.Header>
     )

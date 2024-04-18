@@ -15,6 +15,7 @@ import {
     MeetingStatusName,
 } from '@/constants/meeting'
 import { enumToArray } from '@/utils'
+import { EditTwoTone, EyeTwoTone } from '@ant-design/icons'
 
 const { Text } = Typography
 const ItemFutureBoardMeeting = ({
@@ -114,7 +115,7 @@ const ItemFutureBoardMeeting = ({
                 </Col>
                 <Col
                     span={4}
-                    className="flex items-center justify-end space-x-2"
+                    className="flex items-center justify-end gap-5 space-x-2 pr-5"
                 >
                     {isJoined === 0 ? (
                         <Button
@@ -129,14 +130,34 @@ const ItemFutureBoardMeeting = ({
                             {t('JOINED')}
                         </Button>
                     )}
-                    <Button
+                    {/* <Button
                         size="middle"
                         onClick={() => {
                             router.push('/board-meeting/detail/' + meetings_id)
                         }}
                     >
                         {t('BTN_VIEW_DETAIL')}
-                    </Button>
+                    </Button> */}
+                    <div className="flex gap-3">
+                        <EditTwoTone
+                            style={{ fontSize: '18px' }}
+                            twoToneColor="#5151e5"
+                            onClick={() => {
+                                router.push(
+                                    `/board-meeting/update/${meetings_id}`,
+                                )
+                            }}
+                        />
+                        <EyeTwoTone
+                            style={{ fontSize: '18px' }}
+                            twoToneColor="#5151e5"
+                            onClick={() => {
+                                router.push(
+                                    `/board-meeting/detail/${meetings_id}`,
+                                )
+                            }}
+                        />
+                    </div>
                 </Col>
             </Row>
 

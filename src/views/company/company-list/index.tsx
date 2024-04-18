@@ -3,11 +3,12 @@ import { useListCompany } from '@/stores/company/hooks'
 import { ICompanyList } from '@/stores/company/type'
 import { convertSnakeCaseToTitleCase } from '@/utils/format-string'
 import { getFirstCharacterUpperCase } from '@/utils/get-first-character'
+import { EditTwoTone, EyeTwoTone } from '@ant-design/icons'
 import { Avatar, Badge, Typography } from 'antd'
 import Table, { ColumnsType } from 'antd/es/table'
 import Color from 'color'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const { Text } = Typography
 
@@ -21,6 +22,7 @@ interface CompanyListProps {
 
 const CompanyList = ({ data }: CompanyListProps) => {
     const t = useTranslations()
+    const router = useRouter()
 
     const columns: ColumnsType<ICompanyList> = [
         {
@@ -114,9 +116,22 @@ const CompanyList = ({ data }: CompanyListProps) => {
             title: '',
             key: 'action',
             render: (_, record) => (
-                <Link href={`/company/detail/${record.id}`}>
-                    {t('SEE_DETAIL')}
-                </Link>
+                <div className="flex gap-3">
+                    <EditTwoTone
+                        style={{ fontSize: '18px' }}
+                        twoToneColor="#5151e5"
+                        onClick={() => {
+                            router.push(`/company/update/${record.id}`)
+                        }}
+                    />
+                    <EyeTwoTone
+                        style={{ fontSize: '18px' }}
+                        twoToneColor="#5151e5"
+                        onClick={() => {
+                            router.push(`/company/detail/${record.id}`)
+                        }}
+                    />
+                </div>
             ),
             width: '8%',
         },

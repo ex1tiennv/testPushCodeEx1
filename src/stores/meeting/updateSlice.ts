@@ -1,12 +1,11 @@
-import { IParticipants } from '@/components/participant-selector'
+import {
+    IParticipants,
+    IParticipantsWithRole,
+} from '@/components/participant-selector'
 import { MeetingFileType, MeetingStatus } from '@/constants/meeting'
 import { ResolutionType } from '@/constants/resolution'
 import serviceMeeting from '@/services/meeting'
-import {
-    IUpdateMeeting,
-    IUpdateMeetingState,
-    KeyRoles,
-} from '@/stores/meeting/types'
+import { IUpdateMeeting, IUpdateMeetingState } from '@/stores/meeting/types'
 import { EActionStatus, FetchError } from '@/stores/type'
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
@@ -32,30 +31,30 @@ const initialState: IUpdateMeetingState = {
                 files: [],
                 type: ResolutionType.RESOLUTION,
             },
-            {
-                title: '',
-                description: '',
-                files: [],
-                type: ResolutionType.RESOLUTION,
-            },
-            {
-                title: '',
-                description: '',
-                files: [],
-                type: ResolutionType.RESOLUTION,
-            },
-            {
-                title: '',
-                description: '',
-                files: [],
-                type: ResolutionType.RESOLUTION,
-            },
-            {
-                title: '',
-                description: '',
-                files: [],
-                type: ResolutionType.RESOLUTION,
-            },
+            // {
+            //     title: '',
+            //     description: '',
+            //     files: [],
+            //     type: ResolutionType.RESOLUTION,
+            // },
+            // {
+            //     title: '',
+            //     description: '',
+            //     files: [],
+            //     type: ResolutionType.RESOLUTION,
+            // },
+            // {
+            //     title: '',
+            //     description: '',
+            //     files: [],
+            //     type: ResolutionType.RESOLUTION,
+            // },
+            // {
+            //     title: '',
+            //     description: '',
+            //     files: [],
+            //     type: ResolutionType.RESOLUTION,
+            // },
         ],
         amendmentResolutions: [
             {
@@ -65,40 +64,42 @@ const initialState: IUpdateMeetingState = {
                 files: [],
                 type: ResolutionType.AMENDMENT_RESOLUTION,
             },
+            // {
+            //     title: '',
+            //     description: '',
+            //     oldDescription: '',
+            //     files: [],
+            //     type: ResolutionType.AMENDMENT_RESOLUTION,
+            // },
+            // {
+            //     title: '',
+            //     description: '',
+            //     oldDescription: '',
+            //     files: [],
+            //     type: ResolutionType.AMENDMENT_RESOLUTION,
+            // },
+            // {
+            //     title: '',
+            //     description: '',
+            //     oldDescription: '',
+            //     files: [],
+            //     type: ResolutionType.AMENDMENT_RESOLUTION,
+            // },
+            // {
+            //     title: '',
+            //     description: '',
+            //     oldDescription: '',
+            //     files: [],
+            //     type: ResolutionType.AMENDMENT_RESOLUTION,
+            // },
+        ],
+        participants: [
             {
-                title: '',
-                description: '',
-                oldDescription: '',
-                files: [],
-                type: ResolutionType.AMENDMENT_RESOLUTION,
-            },
-            {
-                title: '',
-                description: '',
-                oldDescription: '',
-                files: [],
-                type: ResolutionType.AMENDMENT_RESOLUTION,
-            },
-            {
-                title: '',
-                description: '',
-                oldDescription: '',
-                files: [],
-                type: ResolutionType.AMENDMENT_RESOLUTION,
-            },
-            {
-                title: '',
-                description: '',
-                oldDescription: '',
-                files: [],
-                type: ResolutionType.AMENDMENT_RESOLUTION,
+                roleMtgId: 1,
+                roleName: '',
+                userParticipant: [],
             },
         ],
-        hosts: [],
-        controlBoards: [],
-        directors: [],
-        administrativeCouncils: [],
-        shareholders: [],
     },
 }
 
@@ -140,18 +141,55 @@ export const initUpdateMeeting = createAsyncThunk<
                 }))
         }
 
-        const getParticipantsByRole = (role: KeyRoles) => {
-            return meetingDetail[role].map(
-                (userMeeting) =>
-                    ({
-                        users_defaultAvatarHashColor: userMeeting.user
-                            .defaultAvatarHashColor as string,
-                        users_avartar: userMeeting.user.avatar as string,
-                        users_username: userMeeting.user.username as string,
-                        users_id: userMeeting.user.id,
-                    }) as IParticipants,
-            )
-        }
+        // const getParticipantsByRole = (role: KeyRoles) => {
+        //     return meetingDetail[role].map(
+        //         (userMeeting) =>
+        //             ({
+        //                 users_defaultAvatarHashColor: userMeeting.user
+        //                     .defaultAvatarHashColor as string,
+        //                 users_avartar: userMeeting.user.avatar as string,
+        //                 users_username: userMeeting.user.username as string,
+        //                 users_id: userMeeting.user.id,
+        //             }) as IParticipants,
+        //     )
+        // }
+
+        const getRoleMtgInMeetings = await serviceMeeting.getRoleMtgs(meetingId)
+
+        let participants: IParticipantsWithRole[] = []
+        await Promise.all([
+            getRoleMtgInMeetings.map(async (roleMtg) => {
+                const participantsWithRole: IParticipantsWithRole = {
+                    roleMtgId: roleMtg.id,
+                    roleName: roleMtg.roleName,
+                    userParticipant: [],
+                }
+                await Promise.all([
+                    meetingDetail.participants.map((participant) => {
+                        if (participant.roleMtgId === roleMtg.id) {
+                            participant.userParticipants.forEach(
+                                (userMeeting) => {
+                                    const userParticipant: IParticipants = {
+                                        users_defaultAvatarHashColor:
+                                            userMeeting.userDefaultAvatarHashColor as string,
+                                        users_avartar:
+                                            userMeeting.userAvatar as string,
+                                        users_email:
+                                            userMeeting.userEmail as string,
+                                        users_id: userMeeting.userId as number,
+                                    }
+
+                                    participantsWithRole.userParticipant.push(
+                                        userParticipant,
+                                    )
+                                },
+                            )
+                        }
+                    }),
+                ])
+                participants.push(participantsWithRole)
+            }),
+        ])
 
         return {
             id: meetingDetail.id,
@@ -172,13 +210,14 @@ export const initUpdateMeeting = createAsyncThunk<
             amendmentResolutions: getProposalsByType(
                 ResolutionType.AMENDMENT_RESOLUTION,
             ),
-            hosts: getParticipantsByRole('hosts'),
-            controlBoards: getParticipantsByRole('controlBoards'),
-            directors: getParticipantsByRole('directors'),
-            administrativeCouncils: getParticipantsByRole(
-                'administrativeCouncils',
-            ),
-            shareholders: getParticipantsByRole('shareholders'),
+            // hosts: getParticipantsByRole('hosts'),
+            // controlBoards: getParticipantsByRole('controlBoards'),
+            // directors: getParticipantsByRole('directors'),
+            // administrativeCouncils: getParticipantsByRole(
+            //     'administrativeCouncils',
+            // ),
+            // shareholders: getParticipantsByRole('shareholders'),
+            participants: participants,
         }
     } catch (error) {
         const err = error as AxiosError

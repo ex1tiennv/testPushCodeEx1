@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import ConnectWallet from './connect-wallet'
 import Menu from './menu'
+import LocaleSwitcher from '@/components/local-switcher'
 
 const LandingHeader = () => {
     const [metaClass, setMetaClass] = useState('')
@@ -40,6 +41,7 @@ const LandingHeader = () => {
                 </Link>
                 <div className="flex items-center gap-10">
                     <Menu />
+                    <LocaleSwitcher />
                     <ConnectWallet />
                     {authState.isAuthenticated && (
                         <AccountInfo

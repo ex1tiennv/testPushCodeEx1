@@ -1,20 +1,22 @@
 /* eslint-disable */
-import useDebounce from '@/hooks/useDebounce'
 import { SettingOutlined } from '@ant-design/icons'
 import { Input, Spin } from 'antd'
 import { useTranslations } from 'next-intl'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { IParticipants } from '.'
+import { IParticipants, IParticipantsWithRole } from '.'
 import { FETCH_STATUS } from '@/constants/common'
 import ParticipantOptionItem from './participant-option-item'
+import useDebounce from '@/hooks/useDebounce'
 import serviceUser from '@/services/user'
 import { useOnClickOutside } from '@/hooks/useOnClickOutside'
+import { convertSnakeCaseToTitleCase } from '@/utils/format-string'
 
 export interface ISelectParticipantGroup {
     onSelectParticipant: (p: IParticipants) => void
     onSelectAllParticipants: (p: IParticipants[]) => void
-    selectedParticipants: IParticipants[]
+    selectedParticipants: IParticipantsWithRole[]
     title: string
+    roleName?: string
 }
 
 const SelectParticipantGroup = ({
@@ -22,6 +24,7 @@ const SelectParticipantGroup = ({
     onSelectAllParticipants,
     selectedParticipants,
     title,
+    roleName,
 }: ISelectParticipantGroup) => {
     const t = useTranslations()
     const [query, setQuery] = useState('')
@@ -57,7 +60,9 @@ const SelectParticipantGroup = ({
                         1,
                         278,
                     )
-                    if (title === 'Shareholders' || title === '株主') {
+                    if (
+                        roleName === convertSnakeCaseToTitleCase('SHAREHOLDER')
+                    ) {
                         optionsRes = {
                             ...optionsRes,
                             items: optionsRes.items.filter((item) => {
@@ -67,27 +72,29 @@ const SelectParticipantGroup = ({
                         }
                     }
                     console.log(
-                        '🚀 ~ file: select-participant-group.tsx:53 ~ ; ~ optionsRes:',
+                        '🚀 ~ file: select-participant-group.tsx:128 ~ ; ~ optionsRes:',
                         optionsRes,
                     )
                     setOptionsData({
                         options: [
                             {
                                 users_defaultAvatarHashColor: '#E57B41',
-                                users_username: t('ALL'),
+                                users_email: t('ALL'),
                                 users_id: 0,
                             },
                             ...optionsRes.items,
                         ],
                         status: FETCH_STATUS.SUCCESS,
                     })
-                } catch (error) {}
+                } catch (error) {
+                    console.log(error)
+                }
             })()
         }
-    }, [searchQuery, isFocus])
+    }, [isFocus, searchQuery])
 
     const onSelect = (p: IParticipants) => {
-        // select all
+        //select all
         if (p.users_id === 0) {
             optionsData.options.shift()
             onSelectAllParticipants(optionsData.options)
@@ -116,24 +123,29 @@ const SelectParticipantGroup = ({
                         {optionsData?.options?.map((option, index) => (
                             <ParticipantOptionItem
                                 key={index}
+                                roleName={roleName}
                                 users_id={option.users_id}
-                                users_username={option.users_username}
+                                users_email={option.users_email}
+                                users_avartar={option.users_avartar}
                                 users_defaultAvatarHashColor={
                                     option.users_defaultAvatarHashColor
                                 }
-                                users_avartar={option.users_avartar}
                                 onSelectParticipant={() => onSelect(option)}
                                 selected={
-                                    selectedParticipants.findIndex(
-                                        (p) => p.users_id === option.users_id,
+                                    selectedParticipants?.findIndex((item) =>
+                                        item.userParticipant.some(
+                                            (p) =>
+                                                p.users_id === option.users_id,
+                                        ),
                                     ) >= 0
                                 }
                             />
                         ))}
                     </div>
+
                     {optionsData.status === FETCH_STATUS.LOADING && (
                         <div className="flex justify-center">
-                            <Spin tip="Loading..." />
+                            <Spin tip="Loading....." />
                         </div>
                     )}
                     {optionsData.status === FETCH_STATUS.SUCCESS &&

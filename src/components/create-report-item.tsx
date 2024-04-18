@@ -1,5 +1,10 @@
+/* eslint-disable */
 import { Button, Input, Select, Typography, Upload } from 'antd'
-import { Resolution, ResolutionTitle, ResolutionType } from '@/constants/resolution'
+import {
+    Resolution,
+    ResolutionTitle,
+    ResolutionType,
+} from '@/constants/resolution'
 import { IBoardProposalFile } from '@/stores/board-meeting/types'
 import { useTranslations } from 'next-intl'
 import { ACCEPT_FILE_TYPES, MeetingFileType } from '@/constants/meeting'
@@ -66,7 +71,6 @@ const CreateReportItem = ({
         }
 
     const onChange =
-        // eslint-disable-next-line
         (callback: (value: string) => void) =>
         (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             callback(event.target.value)
@@ -148,7 +152,6 @@ const CreateReportItem = ({
 
     return (
         <div className="flex flex-row items-start gap-2">
-
             <Text className="leading-10">
                 {t(ResolutionTitle[type])} {index}:
             </Text>

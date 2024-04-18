@@ -17,9 +17,9 @@ export enum UserMeetingStatusEnum {
 }
 
 export enum MeetingRole {
-    HOST = 'host',
-    CONTROL_BOARD = 'control_board',
-    DIRECTOR = 'director',
-    ADMINISTRATIVE_COUNCIL = 'administrative_council',
-    SHAREHOLDER = 'shareholder',
+    HOST = 'HOST',
+    CONTROL_BOARD = 'CONTROL_BOARD',
+    DIRECTOR_GENERAL_DIRECTOR = 'DIRECTOR_GENERAL_DIRECTOR',
+    ADMINISTRATIVE_COUNCIL = 'ADMINISTRATIVE_COUNCIL',
+    SHAREHOLDER = 'SHAREHOLDER',
 }

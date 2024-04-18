@@ -1,7 +1,7 @@
 import { IMeetingItem } from '@/views/meeting/meeting-list/type'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { Button, Col, Row, Tooltip, Typography } from 'antd'
+import { Col, Row, Tooltip, Typography } from 'antd'
 import Image from 'next/image'
 import { truncateString } from '@/utils/format-string'
 import Link from 'next/link'
@@ -12,6 +12,7 @@ import {
     MeetingStatusColor,
     MeetingStatusName,
 } from '@/constants/meeting'
+import { EyeTwoTone } from '@ant-design/icons'
 
 const { Text } = Typography
 const ItemPassBoardMeeting = ({
@@ -76,15 +77,14 @@ const ItemPassBoardMeeting = ({
                     }
                 })}
             </Col>
-            <Col span={4} className="flex items-center justify-end">
-                <Button
-                    size="middle"
+            <Col span={4} className="flex items-center justify-end pr-5">
+                <EyeTwoTone
+                    style={{ fontSize: '18px' }}
+                    twoToneColor="#5151e5"
                     onClick={() => {
-                        router.push('/board-meeting/detail/' + meetings_id)
+                        router.push(`/board-meeting/detail/${meetings_id}`)
                     }}
-                >
-                    {t('BTN_VIEW_DETAIL')}
-                </Button>
+                />
             </Col>
         </Row>
     )

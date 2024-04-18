@@ -39,10 +39,7 @@ const initialState: ICreateBoardMeeting = {
             type: 1,
         },
     ],
-    hosts: [],
-    controlBoards: [],
-    directors: [],
-    administrativeCouncils: [],
+    participants: []
 }
 
 export const boardMeetingCreateSlice = createSlice({
@@ -65,10 +62,11 @@ export const boardMeetingCreateSlice = createSlice({
                 action.payload.managementAndFinancials
             state.elections = action.payload.elections
             state.candidates = action.payload.candidates
-            state.hosts = action.payload.hosts
-            state.controlBoards = action.payload.controlBoards
-            state.directors = action.payload.directors
-            state.administrativeCouncils = action.payload.administrativeCouncils
+            // state.hosts = action.payload.hosts
+            // state.controlBoards = action.payload.controlBoards
+            // state.directors = action.payload.directors
+            // state.administrativeCouncils = action.payload.administrativeCouncils
+            state.participants = action.payload.participants
         },
         updateCreateBoardMeetingReport: (
             state: ICreateBoardMeeting,

@@ -28,11 +28,7 @@ const initialState: ICreateMeeting = {
             type: ResolutionType.AMENDMENT_RESOLUTION,
         },
     ],
-    hosts: [],
-    controlBoards: [],
-    directors: [],
-    administrativeCouncils: [],
-    shareholders: [],
+    participants: [],
 }
 
 // export const getLastPriceList = createAsyncThunk<
@@ -71,7 +67,6 @@ export const meetingCreateSlice = createSlice({
         ) => {
             // state.title = action.payload.title
             // state.link = action.payload.link]
-            console.log('action line 74--', action)
             return action.payload
         },
 

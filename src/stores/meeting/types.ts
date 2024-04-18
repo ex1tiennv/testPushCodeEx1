@@ -5,7 +5,7 @@ import {
     MeetingType,
 } from '@/constants/meeting'
 import { EActionStatus, FetchError } from '../type'
-import { IParticipants } from '@/components/participant-selector'
+import { IParticipantsWithRole } from '@/components/participant-selector'
 import { ResolutionType, VoteProposalOption } from '@/constants/resolution'
 import { UserMeetingStatusEnum } from '@/stores/attendance/type'
 
@@ -20,11 +20,7 @@ export interface ICreateMeeting {
     meetingInvitations: IMeetingDocument[]
     resolutions: IMeetingResolution[]
     amendmentResolutions: IMeetingResolution[]
-    hosts: IParticipants[]
-    controlBoards: IParticipants[]
-    directors: IParticipants[]
-    administrativeCouncils: IParticipants[]
-    shareholders: IParticipants[]
+    participants: IParticipantsWithRole[]
 }
 
 export interface IMeetingDocument {
@@ -119,6 +115,7 @@ export interface IUserMeeting {
         username: string
         email: string
         avatar: string | null
+        shareQuantity: number | null
         defaultAvatarHashColor: string | null
     }
 }
@@ -134,25 +131,28 @@ export interface IMeetingDetail {
     status: MeetingStatus
     companyId: number
     creatorId: number
+    type: MeetingType
     meetingFiles: IMeetingFile[]
     proposals: IProposal[]
-    hosts: IUserMeeting[]
-    controlBoards: IUserMeeting[]
-    directors: IUserMeeting[]
-    administrativeCouncils: IUserMeeting[]
-    shareholders: IUserMeeting[]
+    participants: ParticipantDetailMeeting[]
     shareholdersTotal: number
     shareholdersJoined: number
     joinedMeetingShares: number
     totalMeetingShares: number
 }
 
-export type KeyRoles =
-    | 'hosts'
-    | 'controlBoards'
-    | 'directors'
-    | 'administrativeCouncils'
-    | 'shareholders'
+export interface ParticipantDetailMeeting {
+    roleMtgId: number
+    roleMtgName: string
+    userParticipants: IUserMeeting[]
+}
+//
+// export type KeyRoles =
+//     | 'hosts'
+//     | 'controlBoards'
+//     | 'directors'
+//     | 'administrativeCouncils'
+//     | 'shareholders'
 
 export interface IDetailMeetingState {
     status: EActionStatus
@@ -173,11 +173,7 @@ export interface IUpdateMeeting {
     meetingInvitations: IMeetingDocument[]
     resolutions: IMeetingResolution[]
     amendmentResolutions: IMeetingResolution[]
-    hosts: IParticipants[]
-    controlBoards: IParticipants[]
-    directors: IParticipants[]
-    administrativeCouncils: IParticipants[]
-    shareholders: IParticipants[]
+    participants: IParticipantsWithRole[]
 }
 
 export interface IUpdateMeetingState {

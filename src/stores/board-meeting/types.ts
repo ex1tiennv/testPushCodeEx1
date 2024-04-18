@@ -1,4 +1,4 @@
-import { IParticipants } from '@/components/participant-selector'
+import { IParticipantsWithRole } from '@/components/participant-selector'
 import { ResolutionType } from '@/constants/resolution'
 
 export interface ICreateBoardMeeting {
@@ -13,10 +13,7 @@ export interface ICreateBoardMeeting {
     managementAndFinancials: IBoardMeetingReport[]
     elections: IBoardMeetingReport[]
     candidates: IBoardMeetingExecutive[]
-    hosts: IParticipants[]
-    controlBoards: IParticipants[]
-    directors: IParticipants[]
-    administrativeCouncils: IParticipants[]
+    participants: IParticipantsWithRole[]
 }
 
 export interface IBoardMeetingDocument {

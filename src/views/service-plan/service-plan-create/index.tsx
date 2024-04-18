@@ -29,7 +29,6 @@ const CreatePlan = () => {
     const router = useRouter()
 
     const onFinish = async (value: IPlanCreateForm) => {
-        console.log('value', value)
         try {
             const response = await servicePlan.createPlan({
                 planName: value.planName,

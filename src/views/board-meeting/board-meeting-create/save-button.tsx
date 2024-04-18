@@ -1,76 +1,68 @@
-/*eslint-disable*/
-import { FETCH_STATUS, urlRegex } from '@/constants/common'
-import serviceMeeting from '@/services/meeting'
-import { IUpdateMeetingPayload } from '@/services/request.type'
-import { useUpdateMeetingInformation } from '@/stores/meeting/hooks'
-import { IUpdateMeeting } from '@/stores/meeting/types'
-import { Button, Spin, notification } from 'antd'
-import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+/* eslint-disable */
 
-const SaveUpdateMeetingButton = () => {
+import { useTranslations } from 'next-intl'
+import { useCreateBoardMeetingInformation } from '@/stores/board-meeting/hook'
+import { useState } from 'react'
+import { FETCH_STATUS, urlRegex } from '@/constants/common'
+import { useRouter } from 'next/navigation'
+import { Button, notification, Spin } from 'antd'
+import { ICreateBoardMeeting } from '@/stores/board-meeting/types'
+import { ICreateBoardMeetingPayload } from '@/services/request.type'
+import serviceBoardMeeting from '@/services/board-meeting'
+
+const SaveCreateBoardMeetingButton = () => {
     const t = useTranslations()
-    const [data] = useUpdateMeetingInformation()
+
+    const [data, , resetData] = useCreateBoardMeetingInformation()
     const [status, setStatus] = useState(FETCH_STATUS.IDLE)
     const router = useRouter()
-
-    const onValidate = (data: IUpdateMeeting) => {
+    const onValidate = (data: ICreateBoardMeeting) => {
         const payload = {
             ...data,
             meetingLink:
                 data.meetingLink && !data.meetingLink.startsWith('https://')
                     ? `https://${data.meetingLink}`
                     : data.meetingLink,
-            participants: data.participants.map((p) => ({
-                roleMtgId: p.roleMtgId,
-                roleName: p.roleName,
-                userIds: p.userParticipant.map((user) => user.users_id),
-            })),
-            resolutions: data.resolutions.filter(
+            managementAndFinancials: data.managementAndFinancials.filter(
                 (r) => r.title.trim() || r.description.trim(),
             ),
-            amendmentResolutions: data.amendmentResolutions.filter(
+            elections: data.elections.filter(
                 (r) => r.title.trim() || r.description.trim(),
             ),
+            candidates: data.candidates.filter(
+                (r) => r.title.trim() || r.candidateName.trim(),
+            ),
+            participants: data.participants?.map((participant) => {
+                return {
+                    roleMtgId: participant.roleMtgId,
+                    roleName: participant.roleName,
+                    userIds: participant.userParticipant?.map(
+                        (user) => user.users_id,
+                    ),
+                }
+            }),
         }
-
         const rs: {
             isValid: boolean
             errors: { [key: string]: string }
-            payload: IUpdateMeetingPayload
+            payload: ICreateBoardMeetingPayload
         } = {
             isValid: true,
             errors: {},
             payload,
         }
+
         if (!payload.title.trim()) {
             rs.isValid = false
             rs.errors.title = 'title'
         }
-
         if (!urlRegex.test(payload.meetingLink)) {
             rs.isValid = false
             rs.errors.meetingLink = 'meetingLink'
         }
-
-        // if (
-        //     payload.resolutions.length + payload.amendmentResolutions.length ===
-        //     0
-        // ) {
-        //     rs.isValid = false
-        //     rs.errors.resolution = 'resolution'
-        // }
-
-        // if (payload.amendmentResolutions.length === 0) {
-        //     rs.isValid = false
-        //     rs.errors.amendmentResolutions = 'amendmentResolutions'
-        // }
-
         return rs
     }
     const validate = onValidate(data)
-
     const onSave = () => {
         if (!validate.isValid) {
             return
@@ -78,13 +70,16 @@ const SaveUpdateMeetingButton = () => {
         try {
             ;(async () => {
                 setStatus(FETCH_STATUS.LOADING)
-                await serviceMeeting.updateMeeting(data.id, validate.payload)
+                const res = await serviceBoardMeeting.createBoardMeeting(
+                    validate.payload,
+                )
                 notification.success({
-                    message: t('UPDATED'),
-                    description: t('UPDATED_MEETING_SUCCESSFULLY'),
+                    message: t('CREATED'),
+                    description: t('CREATE_BOARD_MEETING_SUCCESSFULLY'),
                 })
+                resetData()
                 setStatus(FETCH_STATUS.SUCCESS)
-                router.push(`/meeting/detail/${data.id}`)
+                router.push('/board-meeting')
             })()
         } catch (error) {
             notification.error({
@@ -98,7 +93,6 @@ const SaveUpdateMeetingButton = () => {
     return (
         <Spin spinning={status === FETCH_STATUS.LOADING} delay={0}>
             <Button
-                type="default"
                 className="bg-primary text-white transition-opacity disabled:opacity-60"
                 size="large"
                 onClick={onSave}
@@ -109,5 +103,4 @@ const SaveUpdateMeetingButton = () => {
         </Spin>
     )
 }
-
-export default SaveUpdateMeetingButton
+export default SaveCreateBoardMeetingButton

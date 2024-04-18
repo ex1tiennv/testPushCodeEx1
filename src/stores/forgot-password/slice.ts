@@ -22,7 +22,6 @@ const forgotPasswordSlice = createSlice({
             state.currentScreen = action.payload.screen
         },
         setEmail(state, action: PayloadAction<{ email: string }>) {
-            console.log('slice', action.payload.email)
             state.email = action.payload.email
         },
     },

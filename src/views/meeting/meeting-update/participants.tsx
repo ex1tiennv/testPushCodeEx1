@@ -1,87 +1,177 @@
 import BoxArea from '@/components/box-area'
 import ParticipantSelector, {
     IParticipants,
+    IParticipantsWithRole,
 } from '@/components/participant-selector'
 import { useUpdateMeetingInformation } from '@/stores/meeting/hooks'
 import { useTranslations } from 'next-intl'
-
-type ParticipantKey =
-    | 'hosts'
-    | 'controlBoards'
-    | 'directors'
-    | 'administrativeCouncils'
-    | 'shareholders'
+import { useEffect, useState } from 'react'
+import { IRoleMtg } from '@/views/meeting/meeting-create/participants'
+import serviceRoleMtg from '@/services/role-mtg'
+import { TypeRoleMeeting } from '@/constants/role-mtg'
+import { convertSnakeCaseToTitleCase } from '@/utils/format-string'
 
 const Participants = () => {
     const t = useTranslations()
 
     const [data, setData] = useUpdateMeetingInformation()
+    const [roleMtgList, setRoleMtgList] = useState<IRoleMtg[]>([])
 
-    const onSelect = (key: ParticipantKey) => (participant: IParticipants) => {
-        const isNotExited =
-            data[key].findIndex((p) => p.users_id === participant.users_id) < 0
-        if (isNotExited) {
-            setData({
-                ...data,
-                [key]: [...data[key], participant],
+    useEffect(() => {
+        const fetchData = async () => {
+            const roleMtgList = await serviceRoleMtg.getAllRoleMtg({
+                page: 1,
+                limit: 10,
+                type: TypeRoleMeeting.SHAREHOLDER_MTG,
             })
+            if (roleMtgList) {
+                setRoleMtgList(roleMtgList)
+            }
         }
+
+        fetchData()
+    }, [])
+    const checkUserExisted = (
+        participant: IParticipants,
+        participantsWithRole: IParticipantsWithRole[],
+        roleName: string,
+    ): boolean => {
+        const foundRole = participantsWithRole.find(
+            (role) => role.roleName === roleName,
+        )
+        if (foundRole) {
+            return foundRole.userParticipant.some(
+                (user) => user.users_id === participant.users_id,
+            )
+        }
+        return false
     }
+    const onSelect =
+        (roleName: string, roleMtgId: number) =>
+        (participant: IParticipants) => {
+            const isNotExisted = checkUserExisted(
+                participant,
+                data.participants,
+                roleName,
+            )
+
+            if (!isNotExisted) {
+                if (
+                    data.participants.some(
+                        (option) => option.roleName === roleName,
+                    )
+                ) {
+                    // already exist
+                    const updatedParticipants = data.participants.map(
+                        (option) => {
+                            if (option.roleName === roleName) {
+                                return {
+                                    ...option,
+                                    userParticipant: [
+                                        ...option.userParticipant,
+                                        participant,
+                                    ],
+                                }
+                            }
+                            return option
+                        },
+                    )
+
+                    setData({
+                        ...data,
+                        participants: updatedParticipants,
+                    })
+                } else {
+                    //not existed yet
+                    setData({
+                        ...data,
+                        participants: [
+                            ...data.participants,
+                            {
+                                roleMtgId: roleMtgId,
+                                roleName: roleName,
+                                userParticipant: [participant],
+                            },
+                        ],
+                    })
+                }
+            }
+        }
 
     const onSelectAll =
-        (key: ParticipantKey) => (participants: IParticipants[]) => {
-            setData({
-                ...data,
-                [key]: [...participants],
-            })
+        (roleName: string, roleMtgId: number) =>
+        (participants: IParticipants[]) => {
+            if (
+                data.participants.some((option) => option.roleName === roleName)
+            ) {
+                // already exist
+                const updatedParticipants = data.participants.map((option) => {
+                    if (option.roleName === roleName) {
+                        return {
+                            ...option,
+                            userParticipant: [...participants],
+                        }
+                    }
+                    return option
+                })
+
+                setData({
+                    ...data,
+                    participants: updatedParticipants,
+                })
+            } else {
+                //not existed yet
+                setData({
+                    ...data,
+                    participants: [
+                        ...data.participants,
+                        {
+                            roleMtgId: roleMtgId,
+                            roleName: roleName,
+                            userParticipant: [...participants],
+                        },
+                    ],
+                })
+            }
         }
 
-    const onDelete = (key: ParticipantKey) => (participant: IParticipants) => {
+    const onDelete = (roleName: string) => (participant: IParticipants) => {
+        const updatedParticipants = data.participants.map((option) => {
+            if (option.roleName === roleName) {
+                return {
+                    ...option,
+                    userParticipant: option.userParticipant.filter(
+                        (p) => p.users_id !== participant.users_id,
+                    ),
+                }
+            }
+            return option
+        })
         setData({
             ...data,
-            [key]: data[key].filter((p) => p.users_id !== participant.users_id),
+            participants: updatedParticipants,
         })
     }
+
     return (
         <BoxArea title={t('PARTICIPANTS')}>
             <div className="grid min-h-[220px] grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                <ParticipantSelector
-                    title={t('HOST')}
-                    selectedParticipants={data.hosts}
-                    onSelectParticipant={onSelect('hosts')}
-                    onSelectAllParticipants={onSelectAll('hosts')}
-                    onDeleteParticipant={onDelete('hosts')}
-                />
-                <ParticipantSelector
-                    title={t('CONTROL_BOARD')}
-                    selectedParticipants={data.controlBoards}
-                    onSelectParticipant={onSelect('controlBoards')}
-                    onSelectAllParticipants={onSelectAll('controlBoards')}
-                    onDeleteParticipant={onDelete('controlBoards')}
-                />
-                <ParticipantSelector
-                    title={t('DIRECTOR_GENERAL')}
-                    selectedParticipants={data.directors}
-                    onSelectParticipant={onSelect('directors')}
-                    onSelectAllParticipants={onSelectAll('directors')}
-                    onDeleteParticipant={onDelete('directors')}
-                />
-                <ParticipantSelector
-                    title={t('ADMINISTRATIVE_COUNCIL')}
-                    selectedParticipants={data.administrativeCouncils}
-                    onSelectParticipant={onSelect('administrativeCouncils')}
-                    onSelectAllParticipants={onSelectAll(
-                        'administrativeCouncils',
-                    )}
-                    onDeleteParticipant={onDelete('administrativeCouncils')}
-                />
-                <ParticipantSelector
-                    title={t('SHAREHOLDERS')}
-                    selectedParticipants={data.shareholders}
-                    onSelectParticipant={onSelect('shareholders')}
-                    onSelectAllParticipants={onSelectAll('shareholders')}
-                    onDeleteParticipant={onDelete('shareholders')}
-                />
+                {roleMtgList?.map((item, index) => (
+                    <ParticipantSelector
+                        key={index}
+                        title={convertSnakeCaseToTitleCase(item.roleName)}
+                        roleName={item.roleName}
+                        selectedParticipants={data.participants?.filter(
+                            (p) => p.roleName === item.roleName,
+                        )}
+                        onSelectParticipant={onSelect(item.roleName, item.id)}
+                        onSelectAllParticipants={onSelectAll(
+                            item.roleName,
+                            item.id,
+                        )}
+                        onDeleteParticipant={onDelete(item.roleName)}
+                    />
+                ))}
             </div>
         </BoxArea>
     )

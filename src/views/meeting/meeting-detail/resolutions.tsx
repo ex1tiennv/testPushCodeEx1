@@ -9,12 +9,29 @@ import { useMeetingDetail, useResolutions } from '@/stores/meeting/hooks'
 import { useAuthLogin } from '@/stores/auth/hooks'
 import { titleTooltip } from '@/constants/meeting'
 import { UserMeetingStatusEnum } from '@/stores/attendance/type'
+import { RoleMtgEnum } from '@/constants/role-mtg'
+import { IMeetingDetail } from '@/stores/meeting/types'
 
 const Resolutions = () => {
     const resolutions = useResolutions(ResolutionType.RESOLUTION)
     const t = useTranslations()
     const [{ meeting }] = useMeetingDetail()
     const { authState } = useAuthLogin()
+
+    const checkShareholderAuthAndStatusParticipant = (
+        meeting: IMeetingDetail,
+    ): boolean => {
+        return meeting.participants.some((item) => {
+            if (item.roleMtgName === RoleMtgEnum.SHAREHOLDER) {
+                return item.userParticipants.some(
+                    (option) =>
+                        option.user?.id === authState.userData?.id &&
+                        option.status === UserMeetingStatusEnum.PARTICIPATE,
+                )
+            }
+            return false
+        })
+    }
 
     const notifiEnableVote = useMemo(() => {
         let message: string = ''
@@ -25,19 +42,16 @@ const Resolutions = () => {
             if (time < startTime || time > endVotingTime) {
                 message += titleTooltip.votingTime
             }
-            if (
-                !meeting?.shareholders.some(
-                    (item) =>
-                        item.user.id == authState.userData?.id &&
-                        item.status == UserMeetingStatusEnum.PARTICIPATE,
-                )
-            ) {
+            const isShareholderJoined =
+                checkShareholderAuthAndStatusParticipant(meeting)
+            if (isShareholderJoined === false) {
                 message += message
                     ? `_,_${titleTooltip.shareHolder}`
                     : titleTooltip.shareHolder
             }
         }
         return message
+        // eslint-disable-next-line
     }, [meeting, authState])
 
     const body = useMemo(() => {

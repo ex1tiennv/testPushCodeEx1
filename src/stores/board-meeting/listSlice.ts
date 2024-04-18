@@ -1,4 +1,9 @@
-import { IGetAllMeetingQuery, IMeeting, IMeetingState, ListParamsFilter } from '@/stores/meeting/types'
+import {
+    IGetAllMeetingQuery,
+    IMeeting,
+    IMeetingState,
+    ListParamsFilter,
+} from '@/stores/meeting/types'
 import { EActionStatus, FetchError } from '@/stores/type'
 import { CONSTANT_EMPTY_STRING } from '@/constants/common'
 import { MeetingTime, MeetingType, SORT, SortField } from '@/constants/meeting'
@@ -32,19 +37,22 @@ export const getAllFutureBoardMeetings = createAsyncThunk<
     {
         rejectValue: FetchError
     }
->('boardMeeting/getFutureBoardMeetingAll', async (param, { rejectWithValue }) => {
-    try {
-        const data = await serviceBoardMeeting.getAllMeetings(param)
-        return data
-    } catch (error) {
-        const err = error as AxiosError
-        const responseData: any = err.response?.data
-        return rejectWithValue({
-            errorMessage: responseData?.info?.message,
-            errorCode: responseData?.code,
-        })
-    }
-})
+>(
+    'boardMeeting/getFutureBoardMeetingAll',
+    async (param, { rejectWithValue }) => {
+        try {
+            const data = await serviceBoardMeeting.getAllMeetings(param)
+            return data
+        } catch (error) {
+            const err = error as AxiosError
+            const responseData: any = err.response?.data
+            return rejectWithValue({
+                errorMessage: responseData?.info?.message,
+                errorCode: responseData?.code,
+            })
+        }
+    },
+)
 
 export const getAllPassBoardMeetings = createAsyncThunk<
     IGetAllDataReponse<IMeeting>,

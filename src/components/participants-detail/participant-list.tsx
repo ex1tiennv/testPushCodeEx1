@@ -35,7 +35,7 @@ const ParticipantList = ({ participantList, isLoading }: IParticipantList) => {
             {participantList.map((participant, index) => (
                 <ParticipantItem
                     key={index}
-                    name={participant.name}
+                    email={participant.email}
                     defaultAvatarHashColor={participant.defaultAvatarHashColor}
                     avatar={participant.avatar}
                     joined={participant.joined}

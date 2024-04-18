@@ -9,11 +9,13 @@ import { getFirstCharacterUpperCase } from '@/utils/get-first-character'
 import { truncateString } from '@/utils/format-string'
 import React from 'react'
 import { UserStatus } from '@/constants/user-status'
-import Link from 'next/link'
+import { EditTwoTone, EyeTwoTone } from '@ant-design/icons'
+import { useRouter } from 'next/navigation'
 const { Text } = Typography
 
 const ShareholderList = () => {
     const t = useTranslations()
+    const router = useRouter()
     const { shareholderState, getListShareholderAction } = useListShareholder()
     const columns: ColumnsType<IShareholderList> = [
         {
@@ -111,9 +113,25 @@ const ShareholderList = () => {
             title: '',
             key: 'action',
             render: (_, record) => (
-                <Link href={`/shareholder/detail/${record.id}`}>
-                    {t('SEE_DETAIL')}
-                </Link>
+                // <Link href={`/shareholder/detail/${record.id}`}>
+                //     {t('SEE_DETAIL')}
+                // </Link>
+                <div className="flex gap-3">
+                    <EditTwoTone
+                        style={{ fontSize: '18px' }}
+                        twoToneColor="#5151e5"
+                        onClick={() => {
+                            router.push(`/shareholder/update/${record.id}`)
+                        }}
+                    />
+                    <EyeTwoTone
+                        style={{ fontSize: '18px' }}
+                        twoToneColor="#5151e5"
+                        onClick={() => {
+                            router.push(`/shareholder/detail/${record.id}`)
+                        }}
+                    />
+                </div>
             ),
             width: '7%',
         },

@@ -1,8 +1,6 @@
-import { IParticipantsView } from '@/components/participants-detail'
 import { MeetingFileType } from '@/constants/meeting'
 import { ResolutionType, VoteProposalOption } from '@/constants/resolution'
 import { RootState, useAppDispatch, useAppSelector } from '@/stores'
-import { UserMeetingStatusEnum } from '@/stores/attendance/type'
 import {
     resetCreateMeetingData,
     updateCreateMeetingInformation,
@@ -10,14 +8,13 @@ import {
 import { getMeetingDetail } from '@/stores/meeting/detailSlice'
 import {
     ICreateMeeting,
-    IMeetingDetail,
-    KeyRoles,
     IGetAllMeetingQuery,
+    IMeetingDetail,
     IMeetingState,
-    ListParamsFilter,
     IProposalCreator,
-    IUpdateMeeting,
     IProposalFile,
+    IUpdateMeeting,
+    ListParamsFilter,
 } from '@/stores/meeting/types'
 import { EActionStatus } from '@/stores/type'
 import { getFileTypeByUrl } from '@/utils/file'
@@ -161,57 +158,57 @@ export function useMeetingFiles(): {
     }
 }
 
-export function useParticipants(): {
-    hosts: IParticipantsView[]
-    controlBoards: IParticipantsView[]
-    directors: IParticipantsView[]
-    administrativeCouncils: IParticipantsView[]
-    shareholders: IParticipantsView[]
-} {
-    const meeting = useAppSelector(
-        (state: RootState) => state.meetingDetail.meeting,
-    )
-
-    if (!meeting)
-        return {
-            hosts: [],
-            controlBoards: [],
-            directors: [],
-            administrativeCouncils: [],
-            shareholders: [],
-        }
-
-    const getParticipantsByRole = (role: KeyRoles) => {
-        return meeting[role].map(
-            (userMeeting) =>
-                ({
-                    defaultAvatarHashColor:
-                        userMeeting.user.defaultAvatarHashColor,
-                    avatar: userMeeting.user.avatar,
-                    name: userMeeting.user.username,
-                    joined:
-                        userMeeting.status ===
-                        UserMeetingStatusEnum.PARTICIPATE,
-                }) as IParticipantsView,
-        )
-    }
-
-    const hosts = getParticipantsByRole('hosts')
-    const controlBoards = getParticipantsByRole('controlBoards')
-    const directors = getParticipantsByRole('directors')
-    const administrativeCouncils = getParticipantsByRole(
-        'administrativeCouncils',
-    )
-    const shareholders = getParticipantsByRole('shareholders')
-
-    return {
-        hosts,
-        controlBoards,
-        directors,
-        administrativeCouncils,
-        shareholders,
-    }
-}
+// export function useParticipants(): {
+//     hosts: IParticipantsView[]
+//     controlBoards: IParticipantsView[]
+//     directors: IParticipantsView[]
+//     administrativeCouncils: IParticipantsView[]
+//     shareholders: IParticipantsView[]
+// } {
+//     const meeting = useAppSelector(
+//         (state: RootState) => state.meetingDetail.meeting,
+//     )
+//
+//     if (!meeting)
+//         return {
+//             hosts: [],
+//             controlBoards: [],
+//             directors: [],
+//             administrativeCouncils: [],
+//             shareholders: [],
+//         }
+//
+//     const getParticipantsByRole = (role: KeyRoles) => {
+//         return meeting[role].map(
+//             (userMeeting) =>
+//                 ({
+//                     defaultAvatarHashColor:
+//                         userMeeting.user.defaultAvatarHashColor,
+//                     avatar: userMeeting.user.avatar,
+//                     name: userMeeting.user.username,
+//                     joined:
+//                         userMeeting.status ===
+//                         UserMeetingStatusEnum.PARTICIPATE,
+//                 }) as IParticipantsView,
+//         )
+//     }
+//
+//     const hosts = getParticipantsByRole('hosts')
+//     const controlBoards = getParticipantsByRole('controlBoards')
+//     const directors = getParticipantsByRole('directors')
+//     const administrativeCouncils = getParticipantsByRole(
+//         'administrativeCouncils',
+//     )
+//     const shareholders = getParticipantsByRole('shareholders')
+//
+//     return {
+//         hosts,
+//         controlBoards,
+//         directors,
+//         administrativeCouncils,
+//         shareholders,
+//     }
+// }
 
 export function useResolutions(type: ResolutionType): {
     title: string

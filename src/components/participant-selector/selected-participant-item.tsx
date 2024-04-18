@@ -9,11 +9,12 @@ const { Text } = Typography
 
 interface ISelectedParticipantItem extends IParticipants {
     onDeleteParticipant: () => void
+    roleName?: string
 }
 
 const SelectedParticipantItem = ({
     users_defaultAvatarHashColor,
-    users_username,
+    users_email,
     users_avartar,
     onDeleteParticipant,
 }: ISelectedParticipantItem) => {
@@ -43,13 +44,13 @@ const SelectedParticipantItem = ({
                         }}
                         size="small"
                     >
-                        {getFirstCharacterUpperCase(users_username)}
+                        {getFirstCharacterUpperCase(users_email)}
                     </Avatar>
                 )}
 
-                <Text title={users_username} className="cursor-pointer">
+                <Text title={users_email} className="cursor-pointer">
                     {truncateString({
-                        text: users_username,
+                        text: users_email,
                         start: 15,
                         end: 0,
                     })}

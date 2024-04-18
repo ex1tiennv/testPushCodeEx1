@@ -2,7 +2,6 @@ import { IAccountList } from '@/stores/account/type'
 import { useTranslations } from 'next-intl'
 import Table, { ColumnsType } from 'antd/es/table'
 import { Avatar, Badge, Tag, Tooltip, Typography } from 'antd'
-import Link from 'next/link'
 import { useListAccount } from '@/stores/account/hook'
 import { UserStatus } from '@/constants/user-status'
 import {
@@ -14,11 +13,14 @@ import { getFirstCharacterUpperCase } from '@/utils/get-first-character'
 import { AvatarBgHexColors, MAX_DISPLAY_ROLES } from '@/constants/common'
 import RoleInfo from '@/components/role-info'
 import React from 'react'
+import { EditTwoTone, EyeTwoTone } from '@ant-design/icons'
+import { useRouter } from 'next/navigation'
 
 const { Text } = Typography
 
 const AccountList = () => {
     const t = useTranslations()
+    const router = useRouter()
     const { accountState, getListAccountAction } = useListAccount()
 
     const columns: ColumnsType<IAccountList> = [
@@ -170,9 +172,22 @@ const AccountList = () => {
             title: '',
             key: 'action',
             render: (_, record) => (
-                <Link href={`/account/detail/${record.id}`}>
-                    {t('SEE_DETAIL')}
-                </Link>
+                <div className="flex gap-3">
+                    <EditTwoTone
+                        style={{ fontSize: '18px' }}
+                        twoToneColor="#5151e5"
+                        onClick={() => {
+                            router.push(`/account/update/${record.id}`)
+                        }}
+                    />
+                    <EyeTwoTone
+                        style={{ fontSize: '18px' }}
+                        twoToneColor="#5151e5"
+                        onClick={() => {
+                            router.push(`/account/detail/${record.id}`)
+                        }}
+                    />
+                </div>
             ),
             width: '7%',
         },

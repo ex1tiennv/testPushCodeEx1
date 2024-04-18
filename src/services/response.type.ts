@@ -1,6 +1,10 @@
 import { IParticipants } from '@/components/participant-selector'
 import { IParticipantsView } from '@/components/participants-detail'
-import { MeetingFileType, MeetingStatus } from '@/constants/meeting'
+import {
+    MeetingFileType,
+    MeetingStatus,
+    MeetingType,
+} from '@/constants/meeting'
 import { ResolutionType, VoteProposalOption } from '@/constants/resolution'
 import { UserStatus } from '@/constants/user-status'
 import { UserMeetingStatusEnum } from '@/stores/attendance/type'
@@ -72,18 +76,6 @@ export interface IProposalResponse {
     proposalFiles: IProposalFileResponse[]
 }
 
-export interface IUserMeetingResponse {
-    id: number
-    status: UserMeetingStatusEnum
-    user: {
-        id: number
-        username: string
-        email: string
-        avatar: string | null
-        defaultAvatarHashColor: string | null
-    }
-}
-
 export interface IMeetingDetailResponse {
     id: number
     title: string
@@ -95,19 +87,31 @@ export interface IMeetingDetailResponse {
     status: MeetingStatus
     companyId: number
     creatorId: number
+    type: MeetingType
     meetingFiles: IMeetingFileResponse[]
     proposals: IProposalResponse[]
-    hosts: IUserMeetingResponse[]
-    controlBoards: IUserMeetingResponse[]
-    directors: IUserMeetingResponse[]
-    administrativeCouncils: IUserMeetingResponse[]
-    shareholders: IUserMeetingResponse[]
+    participants: ParticipantDetailMeetingResponse[]
     shareholdersTotal: number
     shareholdersJoined: number
     joinedMeetingShares: number
     totalMeetingShares: number
 }
 
+export interface ParticipantDetailMeetingResponse {
+    roleMtgId: number
+    roleMtgName: string
+    userParticipants: IUserMeetingResponse[]
+}
+export interface IUserMeetingResponse {
+    id: number
+    status: UserMeetingStatusEnum
+
+    userId: number
+    userEmail: string
+    userAvatar: string | null
+    userShareQuantity: number | null
+    userDefaultAvatarHashColor: string | null
+}
 export interface IVoteProposalResult {
     result: VoteProposalOption
     userId: number
@@ -117,11 +121,13 @@ export interface IVoteProposalResult {
 }
 
 export interface IMeetingParticipantsResponse {
-    hosts: IParticipantsView[]
-    controlBoards: IParticipantsView[]
-    directors: IParticipantsView[]
-    shareholders: IParticipantsView[]
-    administrativeCouncils: IParticipantsView[]
+    userWithRoleMtg: IParticipantWithRoleMtg[]
+}
+
+export interface IParticipantWithRoleMtg {
+    roleMtgId: number
+    roleMtgName: string
+    userParticipants: IParticipantsView[]
 }
 
 export interface IPlanResponse {
@@ -298,3 +304,12 @@ export interface IPermissionResponse {
     key: string
     description?: string
 }
+
+export interface IRoleMtgResponse {
+    id: number
+    roleName: string
+    description: string
+}
+// export interface IRoleMtgResponse {
+//
+// }

@@ -5,6 +5,7 @@ import {
     IGetAllDataReponse,
     IMeetingDetailResponse,
     IMeetingParticipantsResponse,
+    IRoleMtgResponse,
 } from './response.type'
 
 const serviceMeeting = {
@@ -55,6 +56,12 @@ const serviceMeeting = {
     sendMailInvitationShareholderMeeting: async (meetingId: number) => {
         const response = await post<any>(
             `/meetings/send-email/meeting/${meetingId}`,
+        )
+        return response.data
+    },
+    getRoleMtgs: async (meetingId: number) => {
+        const response = await get<IRoleMtgResponse[]>(
+            `/meetings/${meetingId}/roleMtgs`,
         )
         return response.data
     },

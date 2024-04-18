@@ -72,7 +72,6 @@ const authSlice = createSlice({
                 },
             )
             .addCase(loginByEmail.rejected, (state: IAuthState, action) => {
-                console.log('LoginByEmailReject: ', action.payload)
                 state.errorMessage = action.payload?.errorMessage || ''
                 state.status = EActionStatus.Failed
             })

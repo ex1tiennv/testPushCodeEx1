@@ -5,12 +5,14 @@ import { FETCH_STATUS } from '@/constants/common'
 import useDebounce from '@/hooks/useDebounce'
 import serviceMeeting from '@/services/meeting'
 import { IMeetingParticipantsResponse } from '@/services/response.type'
+import { convertSnakeCaseToTitleCase } from '@/utils/format-string'
 import { SettingOutlined } from '@ant-design/icons'
-import { Input } from 'antd'
+import { Input, Typography } from 'antd'
 import { useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
 import { ChangeEvent, useEffect, useState } from 'react'
 
+const { Text } = Typography
 const Participants = () => {
     const t = useTranslations()
     const [query, setQuery] = useState('')
@@ -21,15 +23,11 @@ const Participants = () => {
     }>({
         status: FETCH_STATUS.IDLE,
         data: {
-            hosts: [],
-            controlBoards: [],
-            directors: [],
-            shareholders: [],
-            administrativeCouncils: [],
+            userWithRoleMtg: [],
         },
     })
-    const searchQuery = useDebounce(query, 200)
 
+    const searchQuery = useDebounce(query, 200)
     useEffect(() => {
         if (id) {
             ;(async () => {
@@ -42,7 +40,9 @@ const Participants = () => {
                         Number(id),
                         searchQuery.trim(),
                     )
+
                     setParticipants({
+                        // ...participants,
                         data: res,
                         status: FETCH_STATUS.SUCCESS,
                     })
@@ -60,6 +60,9 @@ const Participants = () => {
         setQuery(event.target.value)
     }
 
+    const numColumns = Math.min(participants.data.userWithRoleMtg.length, 5)
+    const gridClass = `grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-${numColumns} xl:grid-cols-${numColumns}`
+    const itemWidth = numColumns < 5 ? `calc(100% / ${numColumns})` : 'max-w-sm'
     return (
         <BoxArea title={t('PARTICIPANTS')}>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -73,32 +76,20 @@ const Participants = () => {
                 />
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                <ParticipantDetail
-                    isLoading={participants.status === FETCH_STATUS.LOADING}
-                    title={t('HOST')}
-                    participantList={participants.data.hosts}
-                />
-                <ParticipantDetail
-                    isLoading={participants.status === FETCH_STATUS.LOADING}
-                    title={t('CONTROL_BOARD')}
-                    participantList={participants.data.controlBoards}
-                />
-                <ParticipantDetail
-                    isLoading={participants.status === FETCH_STATUS.LOADING}
-                    title={t('DIRECTOR_GENERAL')}
-                    participantList={participants.data.directors}
-                />
-                <ParticipantDetail
-                    isLoading={participants.status === FETCH_STATUS.LOADING}
-                    title={t('ADMINISTRATIVE_COUNCIL')}
-                    participantList={participants.data.administrativeCouncils}
-                />
-                <ParticipantDetail
-                    isLoading={participants.status === FETCH_STATUS.LOADING}
-                    title={t('SHAREHOLDERS')}
-                    participantList={participants.data.shareholders}
-                />
+            <div className={gridClass}>
+                {participants.data.userWithRoleMtg &&
+                    participants.data.userWithRoleMtg.map((item, index) => (
+                        <ParticipantDetail
+                            isLoading={
+                                participants.status === FETCH_STATUS.LOADING
+                            }
+                            title={convertSnakeCaseToTitleCase(
+                                item.roleMtgName,
+                            )}
+                            participantList={item.userParticipants}
+                            width={itemWidth}
+                        />
+                    ))}
             </div>
         </BoxArea>
     )
